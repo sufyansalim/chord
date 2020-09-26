@@ -1,4 +1,14 @@
 const http = require('http');
+var fs = require('fs');
+
+httpProxy = require('http-proxy');
+
+var addresses = [
+  {
+    host: "localhost",
+    port: 3000
+  },
+];
 
 const todos =[
     {id: 1, text: "Todo One"},
@@ -7,7 +17,21 @@ const todos =[
 
 ]
 
+//Create a set of proxy servers
+var proxyServers = addresses.map(function (target) {
+    return new httpProxy.createProxyServer({
+      target: target
+    });
+  });
+  
+
 const server = http.createServer((req,res)=>{
+
+    var proxy = proxyServers.shift();
+  
+    proxy.web(req, res);
+  
+    proxyServers.push(proxy);
 
     const {method,url} = req;
 
@@ -76,13 +100,11 @@ const server = http.createServer((req,res)=>{
             //     data: data
             // }))
 
- 
-
-
-
 })
 
+const PORT = Math.floor(Math.random() * 1000) + 5000 || 5000;
 
-const PORT = 5000;
+// var contents= fs.readFileSync('./hostfile');
+//server.address().address
 
-server.listen(PORT,()=>console.log(`Server running on port ${PORT}`,server.address()))
+server.listen(PORT,()=>console.log(`Server running on port ${PORT}`))
