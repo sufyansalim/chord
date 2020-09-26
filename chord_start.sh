@@ -14,7 +14,7 @@ elif [ "$1" = "demo" ]; then
 LINE=1
 while read -r NODE
    do
-     echo "$NODE: $LINE"
+     echo "$LINE: $NODE"
      ssh -f $NODE "node /home/ssa169/Distrubuted-System/chord/server.js"
      ((LINE++))
  done < "./hostfile"
